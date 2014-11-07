@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# compare checksums in two directories
+
+echo "Drag and drop the two directories that you would like to compare and then hit ENTER"
+
+read dir1 dir2 
+
+echo "Drag and drop the directory where you would like to save your checksum files"
+
+read dir3
+
+# MD5 contents, ignoring hidden files
+
+cd "$dir1"
+
+find . \( ! -regex '.*/\..*' \)  -type f -exec md5 '{}' \; >> "$dir3"/MD5_Source.csv
+
+cd "$dir2"
+
+find . \( ! -regex '.*/\..*' \)  -type f -exec md5 '{}' \; >> "$dir3"/MD5_Copy.csv
+
+
+# sort and diff output
+
+cd "$dir3"
+
+diff <(sort MD5_Source.csv) <(sort MD5_Copy.csv) > diff.txt
